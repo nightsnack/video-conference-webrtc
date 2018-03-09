@@ -7,8 +7,8 @@ var Meeting = function (socketioHost) {
     var _localStream;
     var _remoteStream;
     var _turnReady;
-    var _pcConfig = {'iceServers': [{'url': 'stun:stun.l.google.com:19302'}]};
-    var _constraints = {video: true, audio:true};
+    var _pcConfig = {'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}]};
+    var _constraints = {video: true, audio: { echoCancellation: true, autoGainControl:true, noiseSuppression :true }};
     var _defaultChannel;
     var _privateAnswerChannel;
     var _offerChannels = {};
@@ -51,8 +51,17 @@ var Meeting = function (socketioHost) {
         // Open up a private communication channel
         initPrivateChannel();
 
+
+        //getting local video stream 
+        navigator.getUserMedia = (
+            navigator.getUserMedia ||
+            navigator.webkitGetUserMedia ||
+            navigator.mozGetUserMedia ||
+            navigator.msGetUserMedia
+        );
+        
         // Get local media data
-        getUserMedia(_constraints, handleUserMedia, handleUserMediaError);
+        navigator.getUserMedia(_constraints, handleUserMedia, handleUserMediaError);
 
         window.onbeforeunload = function(e){
             _defaultChannel.emit('message',{type: 'bye', from:_myID});
@@ -169,6 +178,7 @@ var Meeting = function (socketioHost) {
     ////////////////////////////////////////////////
     
     function initDefaultChannel() {
+        // open a namespace ""
         _defaultChannel = openSignalingChannel('');
         
         _defaultChannel.on('created', function (room){
@@ -233,7 +243,7 @@ var Meeting = function (socketioHost) {
             }
         });
     }
-    
+    //deprecate
     function requestTurn(turn_url) {
         var turnExists = false;
         for (var i in _pcConfig.iceServers) {
@@ -304,7 +314,7 @@ var Meeting = function (socketioHost) {
 	 * @return the socket
 	 */
     function openSignalingChannel(channel) {
-        var namespace = _host + '/' + channel;
+        var namespace = '//' + _host + '/' + channel;
         var sckt = io.connect(namespace);
         return sckt;
     }

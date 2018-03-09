@@ -9,10 +9,18 @@
 var nodestatic = require('node-static');
 var express = require('express');
 var path = require('path');
+var http = require('http');
+var https = require('https');
+var fs = require('fs');
+var privateKey  = fs.readFileSync('/Users/chiyexiao/.https_cert/private.pem', 'utf8');
+var certificate = fs.readFileSync('/Users/chiyexiao/.https_cert/https_nc.crt', 'utf8');
+var credentials = {key: privateKey, cert: certificate};
 
-var serverPort = process.env.OPENSHIFT_NODEJS_PORT || 1337
-var serverIpAddress = process.env.OPENSHIFT_NODEJS_IP || 'localhost'
-var socketIoServer = '127.0.0.1';
+var serverPort = normalizePort(process.env.PORT || '1337');
+var SSLPORT = 1338;
+
+// var serverIpAddress = process.env.OPENSHIFT_NODEJS_IP || '192.168.3.103';
+var socketIoServer = 'localhost';
 
 ////////////////////////////////////////////////
 // SETUP SERVER
@@ -20,6 +28,7 @@ var socketIoServer = '127.0.0.1';
     
 var app = express();
 require('./router')(app, socketIoServer);
+require('./createroom').createroom(app);
 
 // Static content (css, js, .png, etc) is placed in /public
 app.use(express.static(__dirname + '/public'));
@@ -32,11 +41,27 @@ app.set('view engine', 'ejs');
 
 // Tell Server that we are actually rendering HTML files through EJS.
 app.engine('html', require('ejs').renderFile);
-var server=app.listen(serverPort, serverIpAddress, function(){
-    console.log("Express is running on port "+serverPort);
+
+app.set('port', serverPort);
+
+var server = http.createServer(app);
+var httpsServer = https.createServer(credentials, app);
+
+
+server.listen(serverPort,function(){
+  console.log('HTTP Server is running on: http://localhost:%s',serverPort);
 });
 
-var io = require('socket.io').listen(server);
+httpsServer.listen(SSLPORT, function() {
+    console.log('HTTPS Server is running on: https://localhost:%s', SSLPORT);
+});
+
+
+// var server=app.listen(serverPort, serverIpAddress, function(){
+//     console.log("Express is running on port "+serverPort);
+// });
+
+var io = require('socket.io').listen(httpsServer);
 
 ////////////////////////////////////////////////
 // EVENT HANDLERS
@@ -91,3 +116,23 @@ io.sockets.on('connection', function (socket){
     }
 
 });
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}

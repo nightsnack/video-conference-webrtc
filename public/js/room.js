@@ -10,8 +10,15 @@ $( document ).ready(function() {
 	meeting = new Meeting(host);
 	
 	meeting.onLocalVideo(function(stream) {
-	        //alert(stream.getVideoTracks().length);
-	        document.querySelector('#localVideo').src = window.URL.createObjectURL(stream);
+	        // alert(stream.getVideoTracks().length);
+	     //    stream.getTracks()[1].applyConstraints( {echoCancellation :true} ).then(function() {
+		    // 	console.log('applyConstraint success');
+		    // })
+		    // .catch(function(err) {
+		    // 	console.log('applyConstraints', err);
+		    // });
+		    
+	        document.querySelector('#localVideo').srcObject = stream;
 	        
 	        $("#micMenu").on("click",function callback(e) {
 				toggleMic();
@@ -21,7 +28,7 @@ $( document ).ready(function() {
 				toggleVideo();
     		});
 
-			$("#localVideo").prop('muted', true);
+			// $("#localVideo").prop('muted', true);
 
 	    }
 	);
@@ -49,8 +56,15 @@ $( document ).ready(function() {
 
 function addRemoteVideo(stream, participantID) {
     var $videoBox = $("<div class='videoWrap' id='"+participantID+"'></div>");
-    var $video = $("<video class='videoBox' autoplay></video>");
-    $video.attr({"src": window.URL.createObjectURL(stream), "autoplay": "autoplay"});
+    var $video = $("<video class='videoBox' autoplay playsinline></video>");
+    // $video.attr({"srcObject": stream});
+    // stream.getTracks()[1].applyConstraints( {echoCancellation :true} ).then(function() {
+    //   console.log('applyConstraint success');
+    // })
+    // .catch(function(err) {
+    //   console.log('applyConstraints', err);
+    // });
+    $video[0].srcObject=stream;
     $videoBox.append($video);
 	$("#videosWrapper").append($videoBox);
 

@@ -17,7 +17,8 @@ module.exports=function(app, socketIoServer) {
         var path = req.params.path;
         console.log(path);
 		console.log("Requested room "+path);
-        res.render('room', {"hostAddress":socketIoServer});  
+		console.log(req.session.username+"--------------------------------------------------------------------------------------")
+        res.render('room', {"hostAddress":req.host});  
     });
     
 }

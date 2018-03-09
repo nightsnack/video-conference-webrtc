@@ -1,27 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-		<meta name='keywords' content='WebRTC, HTML5, JavaScript' />
-		<meta name='description' content='WebRTC Video Conference App' />
-		<meta name='viewport' content='width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1'>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>	
-		<script src='/js/home.js'></script>
-		<link rel="stylesheet" type="text/css" href="css/home.css" media="screen" />
-		<title>WebRTC Video Conference App Example With Multiple peers</title>
-	</head>
-	<body>  
-        <main id="container">
-			<section id="success">
-				<div id="room-link"><a id="room-url" target="_blank"></a></div>
-				<br>
-				<div class="bubble">
-					Participation link 
-					<br><br>
-					<span>Send this link to anyone you wish to invite. 
-                    </span>
-                </div>
-	    	</section>
-        </main>                     
+	
+	<%- include('header/header',{title:"👉🏻 | WebRTC Video Conference"}) %>
+	<% locals.prefix = "../../MaterializeTemplate/" %>
+
+	
+	<body class="blue lighten-4">  
+        <!-- Start Page Loading -->
+  <div id="loader-wrapper">
+      <div id="loader"></div>        
+      <div class="loader-section section-left"></div>
+      <div class="loader-section section-right"></div>
+  </div>
+  <!-- End Page Loading -->
+
+
+
+  <div id="login-page" class="row">
+    <div class="col s12 z-depth-5 card-panel">
+      <form class="login-form" method="POST" action="/createroom">
+        <div class="row">
+          <div class="input-field col s12 center">
+            <img src="img/webrtc-logo.png" alt="" class="responsive-img valign">
+            <p class="center login-form-text">Create a New Room</p>
+          </div>
+        </div>
+        <div class="row margin">
+          <div class="input-field col s12">
+            <i class="mdi-social-person-outline prefix"></i>
+            <input name="roomid" id="roomid" type="text">
+            <label for="roomid" class="center-align">Room</label>
+          </div>
+        </div>
+        <div class="row margin">
+          <div class="input-field col s12">
+            <i class="mdi-social-person-outline prefix"></i>
+            <input name="username" id="username" type="text">
+            <label for="username" class="center-align">Username</label>
+          </div>
+        </div>
+        <div class="row">          
+          <div class="input-field col s12 m12 l12  login-text">
+              <input type="checkbox" id="remember-me" />
+              <label for="remember-me">Remember me</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <a onclick="postform();" class="btn waves-effect waves-light col s12">Go!</a>
+            <!-- <input type="submit" class="btn waves-effect waves-light col s12" value="Go!"> -->
+
+          </div>
+        </div>
+        
+
+      </form>
+    </div>
+  </div>
+
+      <script type="text/javascript">
+        function postform() {
+          document.getElementsByClassName("login-form")[0].submit();
+        }
+      </script>
+    	<%- include('footer/footer') %> 
+    	<!-- <script src='/js/home.js'></script>                         -->
 	</body>
+	
 </html>

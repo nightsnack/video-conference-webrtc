@@ -10,15 +10,18 @@
  
 module.exports=function(app, socketIoServer) {
     app.get('/',function(req,res){
-        res.render('home');
+        res.render('home',{errormessage:""});
     });
     
-    app.get('/:path',function(req,res){
-        var path = req.params.path;
-        console.log(path);
-		console.log("Requested room "+path);
-		console.log(req.session.username+"--------------------------------------------------------------------------------------")
-        res.render('room', {"hostAddress":req.host});  
+    app.get('/enterroom',function(req,res){
+        if (!req.session.username) res.redirect('/');
+        // var path = req.params.path;
+        // console.log(path);
+        // console.log("Requested room "+path);                                                                                                                                                                                                                 
+        var render_data = {"hostAddress":req.host,
+        "username":req.session.username,
+        "roomid" : req.session.roomid };
+        res.render('room',render_data );  
     });
     
 }

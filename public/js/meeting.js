@@ -34,10 +34,10 @@ var Meeting = function (socketioHost) {
 	 *
 	 * @param name of the room to join
 	 */   
-    function joinRoom(name) {
-        _room = name;
+    function joinRoom(roomid,username) {
+        _room = roomid;
         
-        _myID = generateID();
+        _myID = username;
         console.log('Generated ID: '+_myID);
         
         // Open up a default communication channel

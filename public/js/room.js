@@ -4,6 +4,8 @@ var meeting;
 var host = HOST_ADDRESS; // HOST_ADDRESS gets injected into room.ejs from the server side when it is rendered
 
 $( document ).ready(function() {
+	var username = $("#username")[0].innerText;
+	var roomid = $("#roomid")[0].innerText;
 	/////////////////////////////////
 	// CREATE MEETING
 	/////////////////////////////////
@@ -49,8 +51,8 @@ $( document ).ready(function() {
 	    }
 	);
 	
-    var room = window.location.pathname.match(/([^\/]*)\/*$/)[1];
-	meeting.joinRoom(room);
+    // var room = window.location.pathname.match(/([^\/]*)\/*$/)[1];
+	meeting.joinRoom(roomid,username);
 
 }); // end of document.ready
 

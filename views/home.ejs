@@ -4,7 +4,8 @@
 	<%- include('header/header',{title:"👉🏻 | WebRTC Video Conference"}) %>
 	<% locals.prefix = "../../MaterializeTemplate/" %>
 
-	
+	  <link href="<%= prefix %>css/layouts/page-center.css" type="text/css" rel="stylesheet" media="screen,projection">
+
 	<body class="blue lighten-4">  
         <!-- Start Page Loading -->
   <div id="loader-wrapper">
@@ -49,10 +50,13 @@
           <div class="input-field col s12">
             <a onclick="postform();" class="btn waves-effect waves-light col s12">Go!</a>
             <!-- <input type="submit" class="btn waves-effect waves-light col s12" value="Go!"> -->
-
+          </div>
+        </div
+        <div class="row">
+          <div class="input-field col s12 center">
+            <p class="center"><%= errormessage%></p>
           </div>
         </div>
-        
 
       </form>
     </div>

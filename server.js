@@ -27,6 +27,24 @@ var socketIoServer = 'localhost';
 ////////////////////////////////////////////////
     
 var app = express();
+var session = require('express-session');
+
+const {promisify} = require('util');
+var redis = require('redis');
+var client = redis.createClient();
+
+
+
+// 使用 session 中间件
+app.use(session({
+    secret :  'secret', // 对session id 相关的cookie 进行签名
+    resave : true,
+    saveUninitialized: false, // 是否保存未初始化的会话
+    cookie : {
+        maxAge : 1000 * 60 * 3, // 设置 session 的有效时间，单位毫秒
+    },
+}));
+
 require('./router')(app, socketIoServer);
 require('./createroom').createroom(app);
 
@@ -62,6 +80,7 @@ httpsServer.listen(SSLPORT, function() {
 // });
 
 var io = require('socket.io').listen(httpsServer);
+io.set('log level',2);
 
 ////////////////////////////////////////////////
 // EVENT HANDLERS
@@ -74,12 +93,16 @@ io.sockets.on('connection', function (socket){
         for (var i = 0; i < arguments.length; i++) {
 	  	    array.push(arguments[i]);
         }
-	    socket.emit('log', array);
-	}
+	    socket.emit('info', array);
+    }
+    
 
 	socket.on('message', function (message) {
 		log('Got message: ', message);
         socket.broadcast.to(socket.room).emit('message', message);
+        if (message.type == 'bye') {
+            client.srem('username',message.from,redis.print);
+        }
 	});
     
 	socket.on('create or join', function (message) {

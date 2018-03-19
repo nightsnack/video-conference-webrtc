@@ -12,44 +12,87 @@ $( document ).ready(function() {
 	meeting = new Meeting(host);
 	
 	meeting.onLocalVideo(function(stream) {
-	        // alert(stream.getVideoTracks().length);
-	     //    stream.getTracks()[1].applyConstraints( {echoCancellation :true} ).then(function() {
-		    // 	console.log('applyConstraint success');
-		    // })
-		    // .catch(function(err) {
-		    // 	console.log('applyConstraints', err);
-		    // });
-		    
-	        document.querySelector('#localVideo').srcObject = stream;
-	        
-	        $("#micMenu").on("click",function callback(e) {
-				toggleMic();
-    		});
-    		
-    		$("#videoMenu").on("click",function callback(e) {
-				toggleVideo();
-    		});
 
-			// $("#localVideo").prop('muted', true);
+	    document.querySelector('#localVideo').srcObject = stream;
 
-	    }
-	);
+	    $("#micMenu").on("click", function callback(e) {
+	        toggleMic();
+	    });
+
+	    $("#videoMenu").on("click", function callback(e) {
+	        toggleVideo();
+	    });
+
+	    var source = document.getElementById("join-room-tpl").innerHTML;
+	    var template = Handlebars.compile(source);
+	    var data = { username: username };
+	    var html = template(data);
+	    $("#chat-box").append(html);
+
+	    $("#send").on("click", function() {
+	        var data = {
+	            from: username,
+	            message: $("#message").val()
+	        };
+	        var sendthing = JSON.stringify(data);
+	        meeting.sendChatMessage(sendthing);
+
+		    var source = document.getElementById("send-msg-tpl").innerHTML;
+		    var template = Handlebars.compile(source);
+		    var html = template(data);
+		    $("#chat-box").append(html);
+		    var div = $(".card")[0];
+		    div.scrollTop = div.scrollHeight;
+		    $("#message").val("");
+	    });
+	    // $("#localVideo").prop('muted', true);
+
+	});
 	
 	meeting.onRemoteVideo(function(stream, participantID) {
 	        addRemoteVideo(stream, participantID);  
+	        var memarr = new Array();
+	        $("[id^='memroom_']").each(function(){
+	        	memarr.push($(this).innerText);
+	        });
+	        if (memarr.indexOf(participantID)==-1) {
+	        	$("#memberslist").append('<li class="collection-item" id="memroom_'+participantID+'">'+participantID+'</li>');
+		        var source = document.getElementById("join-room-tpl").innerHTML;
+			    var template = Handlebars.compile(source);
+			    var data = { username: participantID };
+			    var html = template(data);
+			    $("#chat-box").append(html);
+			}
 	    }
 	);
 	
 	meeting.onParticipantHangup(function(participantID) {
 			// Someone just left the meeting. Remove the participants video
 			removeRemoteVideo(participantID);
+			$("#memroom_"+participantID).remove();
+			var source = document.getElementById("leave-room-tpl").innerHTML;
+		    var template = Handlebars.compile(source);
+		    var data = { username: participantID };
+		    var html = template(data);
+		    $("#chat-box").append(html);
 		}
 	);
     
     meeting.onChatReady(function() {
-			console.log("Chat is ready");
-	    }
-	);
+
+        
+        console.log("Chat is ready");
+    });
+
+	meeting.onChatMessage(function(data) {
+		
+		var datatpl = JSON.parse(data);
+		datatpl = JSON.parse(datatpl);
+		var source   = document.getElementById("receive-msg-tpl").innerHTML;
+		var template = Handlebars.compile(source);
+		var html    = template(datatpl);
+		$("#chat-box").append(html);
+	});
 	
     // var room = window.location.pathname.match(/([^\/]*)\/*$/)[1];
 	meeting.joinRoom(roomid,username);
@@ -59,13 +102,7 @@ $( document ).ready(function() {
 function addRemoteVideo(stream, participantID) {
     var $videoBox = $("<div class='videoWrap' id='"+participantID+"'></div>");
     var $video = $("<video class='videoBox' autoplay playsinline></video>");
-    // $video.attr({"srcObject": stream});
-    // stream.getTracks()[1].applyConstraints( {echoCancellation :true} ).then(function() {
-    //   console.log('applyConstraint success');
-    // })
-    // .catch(function(err) {
-    //   console.log('applyConstraints', err);
-    // });
+
     $video[0].srcObject=stream;
     $videoBox.append($video);
 	$("#videosWrapper").append($videoBox);

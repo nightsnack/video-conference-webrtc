@@ -76,7 +76,9 @@ var Meeting = function (socketioHost) {
 	 * @param message String message to be send
 	 */
     function sendChatMessage(message) {
+        message = JSON.stringify(message);
 	    console.log("Sending "+message)
+
         for (var channel in _sendChannel) {
 	        if (_sendChannel.hasOwnProperty(channel)) {
 		        _sendChannel[channel].send(message);
@@ -506,9 +508,9 @@ var Meeting = function (socketioHost) {
 	
 	function enableMessageInterface(shouldEnable) {
 	    if (shouldEnable) {
-			_onChatReadyCallback();
+			_onChatReadyCallback;
 	  	} else {
-	    	_onChatNotReadyCallback();
+	    	_onChatNotReadyCallback;
 	  	}
 	}
     

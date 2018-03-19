@@ -9,19 +9,38 @@
 'use strict';
  
 module.exports=function(app, socketIoServer) {
+    const {promisify} = require('util');
+    var redis = require('redis');
+    var client = redis.createClient();
+
+    client.on('error', function(err) {
+        console.log('Something went wrong ', err)
+    });
+
     app.get('/',function(req,res){
         res.render('home',{errormessage:""});
     });
     
     app.get('/enterroom',function(req,res){
-        if (!req.session.username) res.redirect('/');
-        // var path = req.params.path;
-        // console.log(path);
-        // console.log("Requested room "+path);                                                                                                                                                                                                                 
+        if (!req.session.username) {res.redirect('/');res.end();return false;};
         var render_data = {"hostAddress":req.host,
         "username":req.session.username,
         "roomid" : req.session.roomid };
-        res.render('room',render_data );  
+
+        getMembers(req.session.roomid).then((members) => {
+            render_data.members = members;
+            res.render('room',render_data );  
+        }).catch((error) => {
+            console.log(error);
+            res.render('room',render_data );  
+        })                                                                                                                                                                                                                
+        
     });
+
+    const smembersAsync = promisify(client.smembers).bind(client);
+
+    async function getMembers(room) {
+        return await smembersAsync(room);
+    }
     
 }

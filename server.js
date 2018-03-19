@@ -40,9 +40,9 @@ app.use(session({
     secret :  'secret', // 对session id 相关的cookie 进行签名
     resave : true,
     saveUninitialized: false, // 是否保存未初始化的会话
-    cookie : {
-        maxAge : 1000 * 60 * 3, // 设置 session 的有效时间，单位毫秒
-    },
+    // cookie : {
+    //     maxAge : 1000 * 60 * 3, // 设置 session 的有效时间，单位毫秒
+    // },
 }));
 
 require('./router')(app, socketIoServer);
@@ -101,7 +101,7 @@ io.sockets.on('connection', function (socket){
 		log('Got message: ', message);
         socket.broadcast.to(socket.room).emit('message', message);
         if (message.type == 'bye') {
-            client.srem('username',message.from,redis.print);
+            client.srem(socket.room,message.from,redis.print);
         }
 	});
     

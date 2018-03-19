@@ -21,7 +21,7 @@ var createroom = function(app) {
         req.session.roomid = req.body.roomid;
         req.session.username = req.body.username;
         
-        const myf = myFunc(username);
+        const myf = myFunc(roomid,username);
         myf.then((status) => {
             if (status == true) {
                 res.redirect('/enterroom');
@@ -36,9 +36,10 @@ var createroom = function(app) {
     const sismemberAsync = promisify(client.sismember).bind(client);
     const saddAsync = promisify(client.sadd).bind(client);
 
-    async function myFunc(username) {
-        if (await sismemberAsync('username', username) == 0) {
-            await saddAsync('username', username);
+
+    async function myFunc(room,username) {
+        if (await sismemberAsync(room, username) == 0) {
+            await saddAsync(room, username);
             return true;
         } else {
             reject(new Error("Your username has been used, please try another one.") );

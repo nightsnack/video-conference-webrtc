@@ -15,6 +15,84 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
   font-size: 1.1rem;
 }
 
+.chat-card-row {
+    padding: 12px;
+    border-radius: 0 0 2px 2px;
+}
+
+.chat-card-row p{
+    float: left;
+    font-size: 17px;
+}
+.chat-card-row .card-panel{
+    padding: 10.5px;
+    margin: 10px;
+    margin-top: 40px;
+}
+.chat-card-row .card{
+    max-width: 70%;
+    margin: 10px;
+    margin-top: 40px;
+}
+
+.chat-card-row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+/*=====================================*/
+.chat-card-row-right {
+    padding: 12px;
+    border-radius: 0 0 2px 2px;
+}
+.chat-card-row-right * {
+    float: right;
+}
+.chat-card-row-right p{
+    font-size: 17px;
+}
+.chat-card-row-right .card-panel{
+    padding: 10.5px;
+    margin: 10px;
+    margin-top: 40px;
+}
+.chat-card-row-right .card{
+    max-width: 70%;
+    margin: 10px;
+    margin-top: 40px;
+}
+
+
+.chat-card-row-right .col {
+    float: right;
+}
+
+.card {
+    overflow: auto;
+    max-height: 800px;
+}
+
+
+.chat-card-row-right:after {
+
+    content: "";
+    display: block;
+    clear: both;
+}
+
+.chat-tips {
+    padding: 20px
+}
+
+.chat-tips span {
+    font-size: 16px;
+    color: #7b7b7b; 
+    border-radius: 5px;
+    padding: 3px;
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
 /********************** VIDEO ELEMENTS **************************/
 
 video {

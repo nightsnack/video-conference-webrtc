@@ -1,190 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
-	
-	<%- include('header/header',{title:"👉🏻 | WebRTC Video Conference"}) %>
-	<% locals.prefix = "../../MaterializeTemplate/" %>
-
-  <link href="<%= prefix %>css/layouts/style-fullscreen.css" type="text/css" rel="stylesheet" media="screen,projection">
-	<body>
-
-
-
-
-		<!-- Start Page Loading -->
-		<div id="loader-wrapper">
-				<div id="loader"></div>        
-				<div class="loader-section section-left"></div>
-				<div class="loader-section section-right"></div>
-			</div>
-			<!-- End Page Loading -->
-		  
-			<!-- //////////////////////////////////////////////////////////////////////////// -->
-		  
-			<!-- START HEADER -->
-			<header id="header" class="page-topbar">
-				  <!-- start header nav-->
-				  <div class="navbar-fixed">
-					  <nav class="navbar-color">
-						  <div class="nav-wrapper">
-							  <ul class="left">                      
-								<li><h1 class="logo-wrapper"><a href="index.html" class="brand-logo darken-1"><img src="img/webrtc-logo.png" alt="materialize logo"></a> <span class="logo-text">WebRTC</span></h1></li>
-							  </ul>
-							  <div class="header-search-wrapper hide-on-med-and-down">
-								  <i class="mdi-action-search"></i>
-								  <input type="text" name="Search" class="header-search-input z-depth-2" placeholder="Explore Materialize"/>
-							  </div>
-							  <ul class="right hide-on-med-and-down">
-								  <li><a href="javascript:void(0);" class="waves-effect waves-block waves-light toggle-fullscreen"><i class="mdi-action-settings-overscan"></i></a>
-								  </li>
-								  <li><a href="javascript:void(0);" class="waves-effect waves-block waves-light translation-button"  data-activates="translation-dropdown"><img src="<%= prefix %>images/flag-icons/United-States.png" alt="USA" /></a>
-								  </li>              
-							  </ul>
-							  <!-- translation-button -->
-							  <ul id="translation-dropdown" class="dropdown-content">
-								<li>
-								  <a href="#!"><img src="<%= prefix %>images/flag-icons/United-States.png" alt="English" />  <span class="language-select">English</span></a>
-								</li>
-								
-								<li>
-								  <a href="#!"><img src="<%= prefix %>images/flag-icons/China.png" alt="Chinese" />  <span class="language-select">Chinese</span></a>
-								</li>
-								
-								
-							  </ul>
-							  <!-- notifications-dropdown -->
-							  
-						  </div>
-					  </nav>
-				  </div>
-				  <!-- end header nav-->
-			</header>
-			<!-- END HEADER -->
-		  
-			<!-- //////////////////////////////////////////////////////////////////////////// -->
-		  
-			<!-- START MAIN -->
-			<div id="main">
-			  <!-- START WRAPPER -->
-			  <div class="wrapper">
-		  
-				<!-- START LEFT SIDEBAR NAV-->
-				
-				<!-- END LEFT SIDEBAR NAV-->
-		  
-				<!-- //////////////////////////////////////////////////////////////////////////// -->
-		  
-				<!-- START CONTENT -->
-				<section id="content">
-				  
-				  <!--breadcrumbs start-->
-				  <div id="breadcrumbs-wrapper">
-					  <!-- Search for small screen -->
-					  <div class="header-search-wrapper grey hide-on-large-only">
-						  <i class="mdi-action-search active"></i>
-						  <input type="text" name="Search" class="header-search-input z-depth-2" placeholder="Explore Materialize">
-					  </div>
-					<div class="container">
-					  <div class="row">
-						<div class="col s12 m12 l12">
-						  <h5 class="breadcrumbs-title">Media</h5>
-						  <ol class="breadcrumbs">
-							  <li><a href="index.html">Dashboard</a></li>
-							  <li><a href="#">CSS</a></li>
-							  <li class="active">Media</li>
-						  </ol>
-						</div>
-					  </div>
-					</div>
-				  </div>
-				  <!--breadcrumbs end-->
-				  
-		  
-				  <!--start container-->
-				  <div class="container">
-					<p class="caption">Your name is<p id="username"><%= username %></p></p>
-						  <!--Responsive Images-->
-						  <div class="divider"></div>
-						 
-						  <!--Responsive Videos-->
-						  <div id="responsive-videos" class="section">
-							<h4 class="header">Videos</h4>
-								
-							<div class="row">
-							  <div class="col s12 m4 l3">
-								<h4 class="header">Your room id is <p id="roomid"><%= roomid %></p> </h4>
-								<p>To make your embeds responsive, merely wrap them with a containing div which has the class <code class=" language-markup">video-container</code>
-								</p>
-							  </div>
-							</div>
-							<div class="row">
-							  <div class="col s12 m8 l9">
-								<div class="card-panel">
-								  <div class="video-container">
-									<!-- <iframe width="640" height="360" src="https://www.youtube.com/embed/10r9ozshGVE" frameborder="0" allowfullscreen></iframe> -->
-								  </div>
-
-			<div id="videos">
-                <div id="videosWrapper">
-				    <div id="localVideoWrap" class='videoWrap'>
-					    <video class="videoBox" id="localVideo" muted autoplay playsinline></video>
-					</div>
+<%- include('header/header',{title:"👉🏻 | WebRTC Video Conference"}) %>
+    <% locals.prefix = "../../MaterializeTemplate/" %>
+        <link href="<%= prefix %>css/layouts/style-fullscreen.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <script id="receive-msg-tpl" type="text/x-handlebars-template">
+            <div class="chat-card-row ">
+                <p>{{from}} :</p>
+                <div class="card-panel  teal accent-4 col s8 m6 l6 ">
+                    <span class="white-text">{{message}}</span>
                 </div>
-			</div>
+            </div>
+        </script>
+        <script id="join-room-tpl" type="text/x-handlebars-template">
+            <p class="chat-tips center"><span class=" grey lighten-4">{{username}} entered this room.</span></p>
+        </script>
+        <script id="leave-room-tpl" type="text/x-handlebars-template">
+            <p class="chat-tips center"><span class=" grey lighten-4">{{username}} left this room.</span></p>
+        </script>
+        <script id="send-msg-tpl" type="text/x-handlebars-template">
+            <div class="chat-card-row-right">
+                <p> :{{from}}</p>
+                <div class="card-panel  amber lighten-1 col s8 m6 l6 ">
+                    <span class="white-text">{{message}}</span>
+                </div>
+            </div>
+        </script>
+        <script id="send-pic-tpl" type="text/x-handlebars-template">
+            <div class="chat-card-row-right">
+                <p>:user</p>
+                <div class="card">
+                    <div class="card-image">
+                        <img src="images/img1.jpg" alt="sample">
+                    </div>
+                </div>
+            </div>
+        </script>
 
+        <body>
+            <!-- Start Page Loading -->
+            <div id="loader-wrapper">
+                <div id="loader"></div>
+                <div class="loader-section section-left"></div>
+                <div class="loader-section section-right"></div>
+            </div>
+            <!-- End Page Loading -->
+            <!-- //////////////////////////////////////////////////////////////////////////// -->
+            <!-- START HEADER -->
+            <header id="header" class="page-topbar">
+                <!-- start header nav-->
+                <div class="navbar-fixed">
+                    <nav class="navbar-color">
+                        <div class="nav-wrapper">
+                            <ul class="left">
+                                <li>
+                                    <h1 class="logo-wrapper"><a href="index.html" class="brand-logo darken-1"><img src="img/webrtc-logo.png" alt="materialize logo"></a> <span class="logo-text">WebRTC</span></h1></li>
+                            </ul>
+                            <div class="header-search-wrapper hide-on-med-and-down">
+                                <i class="mdi-action-search"></i>
+                                <input type="text" name="Search" class="header-search-input z-depth-2" placeholder="Explore Materialize" />
+                            </div>
+                            <ul class="right hide-on-med-and-down">
+                                <li><a href="javascript:void(0);" class="waves-effect waves-block waves-light toggle-fullscreen"><i class="mdi-action-settings-overscan"></i></a>
+                                </li>
+                                <li><a href="javascript:void(0);" class="waves-effect waves-block waves-light translation-button" data-activates="translation-dropdown"><img src="<%= prefix %>images/flag-icons/United-States.png" alt="USA" /></a>
+                                </li>
+                            </ul>
+                            <!-- translation-button -->
+                            <ul id="translation-dropdown" class="dropdown-content">
+                                <li>
+                                    <a href="#!"><img src="<%= prefix %>images/flag-icons/United-States.png" alt="English" />  <span class="language-select">English</span></a>
+                                </li>
+                                <li>
+                                    <a href="#!"><img src="<%= prefix %>images/flag-icons/China.png" alt="Chinese" />  <span class="language-select">Chinese</span></a>
+                                </li>
+                            </ul>
+                            <!-- notifications-dropdown -->
+                        </div>
+                    </nav>
+                </div>
+                <!-- end header nav-->
+            </header>
+            <!-- END HEADER -->
+            <!-- //////////////////////////////////////////////////////////////////////////// -->
+            <!-- START MAIN -->
+            <div id="main">
+                <!-- START WRAPPER -->
+                <div class="wrapper">
+                    <!-- START LEFT SIDEBAR NAV-->
+                    <!-- END LEFT SIDEBAR NAV-->
+                    <!-- //////////////////////////////////////////////////////////////////////////// -->
+                    <!-- START CONTENT -->
+                    <section id="content">
+                        <span id="username" hidden><%= username %></span>
+                        <span id="roomid" hidden><%= roomid %></span>
+                        
+                        <!--start container-->
+                        <div class="container">
+                          
+                            <!--Responsive Videos-->
+                            <div id="responsive-videos" class="section">
+                                <div class="row">
+                                    <div class="col s12 m4 l4">
+                                        <h4 class="header">Hi, <%= username %>. You are in room <%= roomid %> </h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    
+                                </div>
+                                <div class="row">
+                                    
+                                    
 
-								</div>
-							  </div>
-							  </div>
-							</div>
-		  
-		  
-						  </div>
-					
-				  </div>
-				  <!--end container-->
-		  
-				</section>
-				<!-- END CONTENT -->
-		  
-				<!-- //////////////////////////////////////////////////////////////////////////// -->
-				<!-- START RIGHT SIDEBAR NAV-->
-				
-				<!-- LEFT RIGHT SIDEBAR NAV-->
-		  
-			  </div>
-			  <!-- END WRAPPER -->
-		  
-			</div>
-			<!-- END MAIN -->
-		  
-		  
-		  
-			<!-- //////////////////////////////////////////////////////////////////////////// -->
-		  
-			<!-- START FOOTER -->
-			<footer class="page-footer">
-			  <div class="footer-copyright">
-				<div class="container">
-				  <span>Copyright © 2015 <a class="grey-text text-lighten-4" href="http://themeforest.net/user/geekslabs/portfolio?ref=geekslabs" target="_blank">GeeksLabs</a> All rights reserved.</span>
-				  <span class="right"> Design and Developed by <a class="grey-text text-lighten-4" href="http://geekslabs.com/">GeeksLabs</a></span>
-				  </div>
-			  </div>
-			</footer>
+                                    <div class="col s12 m12 l8">
+                                    	<ul class="collection with-header" id="memberslist">
+                                            <li class="collection-header">
+                                                Members
+                                            </li>
+                                            <% members.forEach(function(member){%>
+								                <li class="collection-item" id="memroom_<%=member %>"><%=member %></li>
+								            <% }) %>
+                                        </ul>
+                                        <div class="card-panel">
+                                            <div id="videos">
+                                                <div id="videosWrapper">
+                                                    <div id="localVideoWrap" class='videoWrap'>
+                                                        <video class="videoBox" id="localVideo" muted autoplay playsinline></video>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col s12 m12 l4">
+                                        <div class="card">
+                                            <div id="chat-box" class="card-content">
+                                            	<span class="card-title">Chat box</span>
+                                            </div>
+                                            <div class="card-action">
+                                                <div class="row">
+                                                    <div class="input-field col s12 m12 l12">
+                                                        <input id="message" type="text" class="validate">
+                                                        <label for="message">Input here</label>
+                                                        <button class="btn waves-effect waves-light right" id="send" name="action">Send
+                                                            <i class="mdi-content-send right"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-		<script>var HOST_ADDRESS='<%= hostAddress %>';</script>  
-<%- include('footer/footer') %> 
-	<script src='/socket.io/socket.io.js'></script>
-		<script src='https://webrtc.github.io/adapter/adapter-latest.js'></script>
-		<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>		
-		<script src='/js/meeting.js'></script>
-		<script src='/js/room.js'></script>
-
-
-	</body>
-
-
-
-
-		<!-- <link rel="stylesheet" type="text/css" href="/css/room.css" media="screen" /> -->
+                                </div>
+                            </div>
+                        </div>
+                        <!--end container-->
+                    </section>
+                    <!-- END CONTENT -->
+                    <!-- //////////////////////////////////////////////////////////////////////////// -->
+                    <!-- START RIGHT SIDEBAR NAV-->
+                    <!-- LEFT RIGHT SIDEBAR NAV-->
+                </div>
+                <!-- END WRAPPER -->
+            </div>
+            <!-- END MAIN -->
+            <!-- //////////////////////////////////////////////////////////////////////////// -->
+            <!-- START FOOTER -->
+            <footer class="page-footer">
+                <div class="footer-copyright">
+                    <div class="container">
+                        <span>Copyright © 2015 <a class="grey-text text-lighten-4" href="http://themeforest.net/user/geekslabs/portfolio?ref=geekslabs" target="_blank">GeeksLabs</a> All rights reserved.</span>
+                        <span class="right"> Design and Developed by <a class="grey-text text-lighten-4" href="http://geekslabs.com/">GeeksLabs</a></span>
+                    </div>
+                </div>
+            </footer>
+            <script>
+            var HOST_ADDRESS = '<%= hostAddress %>';
+            </script>
+            <%- include('footer/footer') %>
+                <script src='/socket.io/socket.io.js'></script>
+                <script src='https://webrtc.github.io/adapter/adapter-latest.js'></script>
+                <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+                <script src='/js/meeting.js'></script>
+                <script src='/js/room.js'></script>
+        </body>
+        <!-- <link rel="stylesheet" type="text/css" href="/css/room.css" media="screen" /> -->
 
 </html>
